@@ -1,4 +1,4 @@
-package com.rsl.commons
+package com.mongopoc.commons
 
 /**
   * Created by sgar42 on 04-Aug-17.
