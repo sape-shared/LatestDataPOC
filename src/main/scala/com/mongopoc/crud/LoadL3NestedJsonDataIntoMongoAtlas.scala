@@ -1,4 +1,4 @@
-package com.mongopoc.util
+package com.mongopoc.crud
 
 import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
@@ -10,61 +10,40 @@ import com.mongodb.client.model.UpdateManyModel
 import com.mongodb.spark.MongoSpark
 import com.mongodb.spark.config.WriteConfig
 import com.mongodb.{MongoClient, ServerAddress}
-import com.mongopoc.commons.{SparkSessionProvider}
+import com.mongopoc.commons.{MongoConfigurations, SparkSessionProvider}
 import org.apache.spark.broadcast.Broadcast
 import org.bson.Document
 
 /**
   * Created by sgar42 on 04-Aug-17.
   */
-object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider {
+object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with MongoConfigurations {
 
-  val rawDataLocation = config.getString("configuration.rawDataLocation")
-  val tradeIdBatchSize = config.getString("configuration.tradeIdBatchSize")
-  val collection = config.getString("configuration.mongo.collection")
-  val mongo_host = config.getString("configuration.mongo.host")
-  val mongo_port = config.getString("configuration.mongo.port")
-  val num_partitions = config.getString("configuration.num.partitions")
-  val valuationDate = config.getString("configuration.valuationDate")
-  val expireOldRecords = config.getString("configuration.expireOldRecords")
 
-  def main(args: Array[String]): Unit = {
+  def loadL3DataIntoMongoAtlas(baseInputPath : String, startDate : String, numDays : Int, doExpireOldRecords : Boolean) = {
     val propertyMap: Map[String, String] = createPropertyMap
-    val inputRawDataDF: DataFrame = createDFFromRawData(rawDataLocation, propertyMap)
-    val doExpire = expireOldRecords match {
-      case "false" => false
-      case _ => true
-    }
-    if (doExpire)
+    val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)
+
+    if (doExpireOldRecords)
       expireOldVersion(inputRawDataDF, propertyMap)
 
     val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port) + ":" + mongo_port
     val writeConfig = WriteConfig(Map("uri" -> s"mongodb://$mongoServers/risk.$collection"))
     MongoSpark.save(inputRawDataDF, writeConfig)
+
   }
 
   def createPropertyMap: Map[String, String] = {
-    Map(VALUATION_DATE -> valuationDate, TRADE_ID_BATCH_SIZE -> tradeIdBatchSize, MONGO_COLLECTION -> collection, MONGO_HOST -> mongo_host, MONGO_PORT -> mongo_port, DB_NAME -> "risk", NUM_PARTITIONS -> num_partitions, EXPIRE_OLD_RECORDS -> expireOldRecords)
+    Map(TRADE_ID_BATCH_SIZE -> tradeIdBatchSize, MONGO_COLLECTION -> collection, MONGO_HOST -> mongo_host, MONGO_PORT -> mongo_port, DB_NAME -> "risk", NUM_PARTITIONS -> num_partitions)
   }
 
   def createDFFromRawData(rawDataLocation: String, propertyMap: Map[String, String]): DataFrame = {
     val inputDF = spark.read.json(rawDataLocation)
-    val resultantDF = inputDF.drop(VALUATION_DATE).drop(VALID_TO).drop(VALID_FROM).withColumn(VALUATION_DATE, lit(getValuationDate(propertyMap.get(VALUATION_DATE).getOrElse(""))))
-      .withColumn(VALID_TO, lit(DEFAULT_VALID_TO_DATE)).withColumn(VALID_FROM, lit(getCurrentTimeStamp()))
+    val resultantDF = inputDF.drop(VALID_TO).drop(VALID_FROM).withColumn(VALID_TO, lit(DEFAULT_VALID_TO_DATE)).withColumn(VALID_FROM, lit(getCurrentTimeStamp()))
 
     resultantDF
   }
 
-
-  def getValuationDate(valuationDate: String): Long = {
-    var valuation_date = 0L
-    if (valuationDate.isEmpty)
-      valuation_date = DEFAULT_VALUATION_DATE
-    else
-      valuation_date = valuationDate.trim.toLong
-
-    valuation_date
-  }
 
   def getCurrentTimeStamp(): String = {
     val timeStampFormat: String = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT).withZone(ZoneId.systemDefault()).format(Instant.now)

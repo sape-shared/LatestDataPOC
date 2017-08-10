@@ -11,7 +11,7 @@ import scala.collection.mutable
 /**
   * Created by sgar42 on 04-Aug-17.
   */
-class SparkSessionProvider extends Configuration {
+trait SparkSessionProvider extends Configuration {
 
   // val sparkConfSettings: mutable.Set[(String, ConfigValue)] = config.getConfig("configuration.spark").entrySet().asScala.map(entry => (entry.getKey, entry.getValue))
 
