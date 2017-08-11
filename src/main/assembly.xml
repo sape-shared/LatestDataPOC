@@ -9,15 +9,24 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
+            <outputDirectory>LatestDataPOC</outputDirectory>
+            <excludes>
+                <exclude>/**</exclude>
+            </excludes>
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory>conf</outputDirectory>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>LatestDataPOC/lib</outputDirectory>
+            <includes>
+                <include>${project.artifactId}.jar</include>
+            </includes>
+
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.build.directory}/classes</directory>
+            <outputDirectory>LatestDataPOC/conf</outputDirectory>
             <includes>
                 <include>application.conf</include>
             </includes>

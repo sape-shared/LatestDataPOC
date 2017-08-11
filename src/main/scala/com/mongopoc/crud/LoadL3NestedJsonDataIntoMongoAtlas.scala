@@ -1,22 +1,20 @@
 package com.mongopoc.crud
 
-import java.time.{Instant, LocalDate, ZoneId}
+import java.time.{LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter
 
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.lit
 import com.mongopoc.commons.Constants._
 import com.mongodb.client.model.UpdateManyModel
 import com.mongodb.spark.MongoSpark
 import com.mongodb.spark.config.WriteConfig
-import com.mongodb.{MongoClient, ServerAddress}
+import com.mongodb._
 import com.mongopoc.commons.{MongoConfigurations, SparkSessionProvider}
 import org.apache.hadoop.fs.Path
 import org.apache.spark.broadcast.Broadcast
 import org.bson.Document
 
 import scala.collection.mutable
-import scala.collection.mutable.{ListBuffer => MutableListBuffer}
 
 /**
   * Created by sgar42 on 04-Aug-17.
@@ -24,14 +22,14 @@ import scala.collection.mutable.{ListBuffer => MutableListBuffer}
 object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with MongoConfigurations {
 
 
-  def loadL3DataIntoMongoAtlas(baseInputPath : String, startDate : String, numDays : Int, doExpireOldRecords : Boolean) = {
+  def loadL3DataIntoMongoAtlas(baseInputPath: String, startDate: String, numDays: Int, doExpireOldRecords: Boolean) = {
 
     val propertyMap: Map[String, String] = createPropertyMap
     val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault())
     val sd = LocalDate.parse(startDate, dateTimeFormat)
     val inputPathList = mutable.MutableList[String]()
 
-    (0 until  numDays).map{ days =>
+    (0 until numDays).map { days =>
       val date = sd.plusDays(days).format(dateTimeFormat)
       inputPathList += baseInputPath + Path.SEPARATOR_CHAR + date
     }
@@ -48,17 +46,19 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
 
     //val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)
 
-    if (doExpireOldRecords)
-      expireOldVersion(inputDF, propertyMap)
+    val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port + ",") + ":" + mongo_port
+    val mongoAtlasURI = s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
 
-    val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port) + ":" + mongo_port
-    val writeConfig = WriteConfig(Map("uri" -> s"mongodb://$mongoServers/risk.$collection"))
+    if (doExpireOldRecords)
+      expireOldVersion(inputDF, propertyMap, mongoAtlasURI)
+
+    val writeConfig = WriteConfig(Map("uri" -> mongoAtlasURI))
     MongoSpark.save(inputDF, writeConfig)
 
   }
 
   def createPropertyMap: Map[String, String] = {
-    Map(TRADE_ID_BATCH_SIZE -> tradeIdBatchSize, MONGO_COLLECTION -> collection, MONGO_HOST -> mongo_host, MONGO_PORT -> mongo_port, DB_NAME -> "risk", NUM_PARTITIONS -> num_partitions)
+    Map(TRADE_ID_BATCH_SIZE -> tradeIdBatchSize, DB_NAME -> mongoDbName, NUM_PARTITIONS -> num_partitions)
   }
 
   /*def createDFFromRawData(rawDataLocation: String, propertyMap: Map[String, String]): DataFrame = {
@@ -74,7 +74,7 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     timeStampFormat
   }*/
 
-  def expireOldVersion(dataFrame: DataFrame, propertyMap: Map[String, String]): Unit = {
+  def expireOldVersion(dataFrame: DataFrame, propertyMap: Map[String, String], mongoAtlasURI: String): Unit = {
     import scala.collection.JavaConverters._
 
     val propertyMap_Broadcast: Broadcast[Map[String, String]] = dataFrame.rdd.context.broadcast(propertyMap)
@@ -85,9 +85,21 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
       .foreachPartition { iter =>
         // Partition level declaration
         val propertyMapPartitionLevel = propertyMap_Broadcast.value
-        val mongoPort = propertyMapPartitionLevel.get(MONGO_PORT).get.trim.toInt
-        val mongoServerAddress: Seq[ServerAddress] = propertyMapPartitionLevel.get(MONGO_HOST).get.split(" ").map { host => new ServerAddress(host.trim, mongoPort) }.toList
-        val mongoClient = new MongoClient(mongoServerAddress.asJava)
+
+        /* val mongoPort = propertyMapPartitionLevel.get(MONGO_PORT).get.trim.toInt
+         val mongoServerAddress: Seq[ServerAddress] = propertyMapPartitionLevel.get(MONGO_HOST).get.split(" ").map { host => new ServerAddress(host.trim, mongoPort) }.toList
+         val mongoCredential: MongoCredential = MongoCredential.createMongoCRCredential(mongoUsername, mongoDbName, mongoPassword.toCharArray())
+         var credentials = List[MongoCredential]()
+         credentials = mongoCredential :: credentials
+
+         val builder = new MongoClientOptions.Builder();
+         builder.maxConnectionIdleTime(60000);
+         val opts = builder.build();*/
+
+        val mongoClient = new MongoClient(new MongoClientURI(mongoAtlasURI))
+
+        //  val mongoClient = new MongoClient(new MongoClientURI("mongodb://shiva:'test@123'@cluster0-shard-00-00-oym47.mongodb.net:27017,cluster0-shard-00-01-oym47.mongodb.net:27017,cluster0-shard-00-02-oym47.mongodb.net:27017/risk?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"))
+
         val riskCollection = mongoClient.getDatabase(propertyMapPartitionLevel.get(DB_NAME).get).getCollection(propertyMapPartitionLevel.get(MONGO_COLLECTION).get)
         val tradeIDBatchSize = propertyMapPartitionLevel.get(TRADE_ID_BATCH_SIZE)
 
