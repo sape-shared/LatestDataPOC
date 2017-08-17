@@ -25,7 +25,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>${project.build.directory}/classes</directory>
+            <directory>${project.basedir}/src/main/resources/conf</directory>
             <outputDirectory>LatestDataPOC/conf</outputDirectory>
             <includes>
                 <include>application.conf</include>

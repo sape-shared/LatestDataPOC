@@ -37,11 +37,6 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     println("Input Locations for Load L3 Data : ")
     inputPathList.foreach(println(_))
 
-    /*while (!sd.isAfter(ed)) {
-      inputPathList += baseInputPath + Path.SEPARATOR_CHAR + sd.format(dateTimeFormat)
-      sd = sd.plusDays(1)
-    }*/
-
     val inputDF = spark.read.json(inputPathList: _*)
 
     //val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)

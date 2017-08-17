@@ -39,7 +39,7 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${spark-version}</artifactId>
             <version>${spark-core-version}</version>
-           <!-- <scope>provided</scope>-->
+            <!-- <scope>provided</scope>-->
         </dependency>
 
         <dependency>
@@ -67,6 +67,16 @@
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.conf</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <!-- see http://davidb.github.com/scala-maven-plugin -->
@@ -123,7 +133,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <finalName>${project.artifactId}-${pom.version}</finalName>
                             <descriptors>
-                                <descriptor>src/main/assembly.xml</descriptor>
+                                <descriptor>src/assembly/latestdatapoc-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

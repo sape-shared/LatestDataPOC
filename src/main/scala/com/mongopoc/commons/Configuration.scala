@@ -1,5 +1,7 @@
 package com.mongopoc.commons
 
+import java.io.File
+
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory._
 
@@ -8,6 +10,6 @@ import com.typesafe.config.ConfigFactory._
   */
 trait Configuration {
   implicit lazy val config: Config = {
-    load()
+    load("conf" + File.separator + "application.conf")
   }
 }
