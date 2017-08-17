@@ -10,4 +10,7 @@ trait Configuration {
   implicit lazy val config: Config = {
     load()
   }
+
+
+
 }
