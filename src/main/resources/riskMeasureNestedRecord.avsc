@@ -1,0 +1,125 @@
+{"type": "record", "name": "RiskMeasureNestedRecord", "namespace": "risk.nested",
+"fields": [
+{"name": "valuationDate", "type": "int"},
+{"name": "riskSource", "type": {"type": "record", "name": "RiskSource",
+"fields": [{"name": "bookId", "type": ["null", "string"], "default":null},
+            {"name": "hsbctradeId", "type": ["null", "string"], "default":null},
+            {"name": "tradeId", "type": ["null", "string"], "default":null},
+            {"name": "tradeVersion", "type": ["null", "string"], "default":null},
+            {"name": "tradeLegId", "type": ["null", "string"], "default":null},
+            {"name": "counterpartyId", "type": ["null", "string"], "default":null},
+            {"name": "positionId", "type": ["null", "string"], "default":null},
+            {"name": "instrumentId", "type": ["null", "string"], "default":null},
+            {"name": "sourceSystemClass", "type": "string"},
+            {"name": "sourceSystemName", "type": "string"},
+            {"name": "sourceIdentifier", "type": "string"},
+            {"name": "sourceFormatType", "type": "string"},
+            {"name": "riskSourceType", "type": "string"}
+            ]
+}
+},
+
+{"name": "measure", "type": {"type": "record", "name": "Measure",
+"fields": [{"name": "name", "type": "string"},
+            {"name": "class", "type": "string"},
+            {"name": "snapshotcode", "type": ["null", "string"], "default":null},
+            {"name": "propertyMap", "type": {"type": "map", "values": "string"}},
+            {"name": "tradedRiskCode", "type": ["null", "string"], "default":null},
+            {"name": "stateStatus", "type": "string"},
+            {"name": "stateMessage", "type": ["null", "string"], "default":null},
+            {"name": "measureTypeTimespan", "type": ["null", "string"], "default":null},
+            {"name": "unitName", "type": "string"},
+            {"name": "unitAssetType", "type": "string"}
+           ]
+}
+},
+
+{"name": "riskFactor1", "type": ["null", {"type": "record", "name": "RiskFactor",
+"fields": [{"name": "riskFactor1Type", "type": ["null", "string"], "default":null},
+            {"name": "curveId", "type": ["null", "string"], "default":null},
+            {"name": "curveName", "type": {"type": "map", "values": "string"}},
+            {"name": "curveCurrency", "type": ["null", "string"], "default":null},
+            {"name": "curveIndex", "type": ["null", "string"], "default":null},
+            {"name": "curveTerm", "type": ["null", "string"], "default":null},
+            {"name": "volSurface", "type": ["null", "string"], "default":null},
+            {"name": "instrumentId", "type": ["null", "string"], "default":null},
+            {"name": "instrumentType", "type": ["null", "string"], "default":null},
+            {"name": "instrumentExpiry", "type": ["null", "string"], "default":null},
+            {"name": "instrumentName", "type": ["null", "string"], "default":null},
+            {"name": "instrumentSymbol", "type": ["null", "string"], "default":null},
+            {"name": "instrumentCurrency", "type": ["null", "string"], "default":null}
+           ]
+}], "default": "null"
+},
+
+{"name": "riskFactor2", "type": ["null", "RiskFactor"], "default": null},
+
+{"name": "axisDetails", "type": ["null", {"type": "record", "name": "AxisDetails",
+"fields": [{"name": "xAxis", "type": ["null", {"type": "record", "name": "Axis", "fields": [{"name": "axisType", "type": ["null", "string"], "default":null},
+            {"name": "axisUnit", "type": ["null", "string"], "default":null}]}], "default": "null"},
+            {"name": "yAxis", "type": ["null", "Axis"], "default":null},
+            {"name": "zAxis", "type": ["null", "Axis"], "default":null},
+            {"name": "axisPoints", "type": ["null", {"type": "array", "items": {"type": "record", "name": "AxisPoints", "fields": [
+            {"name": "xAxisPoints", "type": ["null", {"type": "record", "name": "AxisPoint", "fields": [
+               {"name": "label", "type": ["null", "string"], "default":null},
+               {"name": "value", "type": ["null", "string"], "default":null}
+            ]}], "default":null},
+            {"name": "yAxisPoint", "type": ["null", "AxisPoint"], "default":null},
+            {"name": "zAxisPoint", "type": ["null", "AxisPoint"], "default":null},
+            {"name": "measureValue", "type": "double"}
+            ]}}], "default": "null"}
+]}], "default": "null"},
+
+{"name": "scenario", "type": ["null", {
+"type": "record", "name": "Scenario",
+"fields": [{"name": "name", "type": ["null", "string"], "default":null},
+            {"name": "shift", "type": ["null", "string"], "default":null},
+            {"name": "rateShift", "type": ["null", "string"], "default":null},
+            {"name": "volShift", "type": {"type": "map", "values": "string"}},
+            {"name": "spotShift", "type": ["null", "string"], "default":null},
+            {"name": "csShift", "type": ["null", "string"], "default":null},
+            {"name": "curveShift", "type": ["null", "string"], "default":null},
+            {"name": "correlShift", "type": ["null", "string"], "default":null},
+              {"name": "volTermShift", "type": ["null", "string"], "default":null},
+              {"name": "dividendTermShift", "type": ["null", "string"], "default":null},
+              {"name": "shiftType", "type": ["null", "string"], "default":null}
+           ]
+}], "default" :null},
+
+{"name": "instructionSet", "type": ["null", {
+"type": "record", "name": "InstructionSet",
+"fields": [{"name": "discountingMethodolgy", "type": ["null", "string"], "default":null},
+            {"name": "refCcy", "type": ["null", "string"], "default":null},
+            {"name": "quantityMode", "type": ["null", "string"], "default":null},
+            {"name": "bucketMode", "type": {"type": "map", "values": "string"}},
+            {"name": "pricingMode", "type": ["null", "string"], "default":null}
+           ]
+}], "default" : null},
+
+{"name": "valuationContext", "type": {
+"type": "record", "name": "ValuationContext",
+"fields": [{"name": "valuationContextId", "type": ["null", "string"], "default":null},
+            {"name": "description", "type": ["null", "string"], "default":null},
+            {"name": "bactchName", "type": ["null", "string"], "default":null},
+            {"name": "bactchId", "type": ["null", "string"], "default":null},
+            {"name": "batcTimestamp", "type": "long"},
+            {"name": "transformTimestamp", "type": "long"},
+            {"name": "sourceRiskEngineName", "type": ["null", "string"], "default":null},
+            {"name": "sourceRiskEngineVersion", "type": ["null", "string"], "default":null},
+            {"name": "quaintLibVersion", "type": ["null", "string"], "default":null},
+            {"name": "tradeDataContext", "type": ["null", "string"], "default":null}
+           ]
+}},
+
+{"name": "marketContext", "type": {
+"type": "record", "name": "MarketContext",
+"fields": [{"name": "marketContextName", "type": ["null", "string"], "default":null},
+            {"name": "marketContextSetId", "type": ["null", "string"], "default":null},
+            {"name": "marketContextTimestamp", "type": ["null", "string"], "default":null}
+           ]
+}},
+
+{"name": "validFrom", "type": "long"},
+{"name": "validTo", "type": "long", "default":99991231}
+
+]}
