@@ -16,9 +16,9 @@ import org.apache.spark.broadcast.Broadcast
 import org.bson.Document
 
 import scala.collection.mutable
-import com.databricks.spark.avro.{AvroDataFrameReader, SchemaConverters}
+import com.databricks.spark.avro.{SchemaConverters}
 import org.apache.avro.Schema
-import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
+import org.apache.spark.sql.types.{StructField, StructType}
 
 import scala.collection.JavaConverters._
 import scala.io.Source
@@ -50,31 +50,31 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
       sd = sd.plusDays(1)
     }*/
     //prepare schema
-    val avroPath= getClass.getResource("/conf/riskMeasureNestedRecord.avsc").getPath
-    val schema= new Schema.Parser().parse(new File(avroPath))
-    val schemaFields=schema.getFields()
-    var arr= new Array[org.apache.spark.sql.types.StructField](schemaFields.size)
-    var i=0
-    for(field <- schemaFields.asScala){
-      val sField=new StructField(field.name ,SchemaConverters.toSqlType(field.schema).dataType)
-      arr(i)=sField
-      i=i+1
+    val avroPath = getClass.getResource("/conf/riskMeasureNestedRecord.avsc").getPath
+    val schema = new Schema.Parser().parse(new File(avroPath))
+    val schemaFields = schema.getFields()
+    var arr = new Array[org.apache.spark.sql.types.StructField](schemaFields.size)
+    var i = 0
+    for (field <- schemaFields.asScala) {
+      val sField = new StructField(field.name, SchemaConverters.toSqlType(field.schema).dataType)
+      arr(i) = sField
+      i = i + 1
     }
-    val sType= new StructType(arr)
+    val sType = new StructType(arr)
     val inputDF = spark.read.schema(sType).json(inputPathList: _*)
     //val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)
 
     val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port + ",") + ":" + mongo_port
-    val mongoAtlasURI =  if(mongoSecurityEnabled)
-                          s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
-                        else
-                          s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
+    val mongoAtlasURI = if (mongoSecurityEnabled)
+      s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+    else
+      s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
 
     if (doExpireOldRecords)
       expireOldVersion(inputDF, propertyMap, mongoAtlasURI)
 
     val writeConfig = WriteConfig(Map("uri" -> mongoAtlasURI, "w" -> writeConcernsW,
-                                      "j" -> writeConcernsJournaled, "wtimeout" -> writeConcernsTimeout ))
+      "j" -> writeConcernsJournaled, "wtimeout" -> writeConcernsTimeout))
     MongoSpark.save(inputDF, writeConfig)
 
   }
