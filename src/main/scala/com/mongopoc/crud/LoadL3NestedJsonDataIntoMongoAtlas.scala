@@ -70,7 +70,8 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     if (doExpireOldRecords)
       expireOldVersion(inputDF, propertyMap, mongoAtlasURI)
 
-    val writeConfig = WriteConfig(Map("uri" -> mongoAtlasURI))
+    val writeConfig = WriteConfig(Map("uri" -> mongoAtlasURI, "w" -> writeConcernsW,
+                                      "j" -> writeConcernsJournaled, "wtimeout" -> writeConcernsTimeout ))
     MongoSpark.save(inputDF, writeConfig)
 
   }
@@ -98,7 +99,7 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     val propertyMap_Broadcast: Broadcast[Map[String, String]] = dataFrame.rdd.context.broadcast(propertyMap)
     dataFrame.sqlContext.setConf("spark.sql.shuffle.partitions", propertyMap.get(NUM_PARTITIONS).get)
 
-    dataFrame.select(RISK_SOURCE_HSBC_TRADE_ID, VALUATION_DATE, VALUATION_CONTEXT_DESCRIPTION, MEASURE_NAME, VALID_FROM)
+    dataFrame.select(RISK_SOURCE_TRADE_ID, VALUATION_DATE, VALUATION_CONTEXT_DESCRIPTION, MEASURE_NAME, VALID_FROM)
       .distinct()
       .foreachPartition { iter =>
         // Partition level declaration
@@ -125,7 +126,7 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
           groupedRows =>
             val writeBatch: List[UpdateManyModel[Document]] = groupedRows.map { row =>
               val filter = new Document()
-              filter.put(RISK_SOURCE_HSBC_TRADE_ID, row.getAs[String]("hsbctradeId"))
+              filter.put(RISK_SOURCE_TRADE_ID, row.getAs[String]("tradeId"))
               filter.put(VALUATION_DATE, row.getAs[String]("valuationDate"))
               filter.put(VALUATION_CONTEXT_DESCRIPTION, row.getAs[String]("description"))
               filter.put(MEASURE_NAME, row.getAs[String]("name"))

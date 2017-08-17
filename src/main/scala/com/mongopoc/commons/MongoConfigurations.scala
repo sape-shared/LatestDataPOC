@@ -13,4 +13,7 @@ trait MongoConfigurations extends Configuration {
   val ssl = config.getString("configuration.mongo.ssl")
   val replicaSet = config.getString("configuration.mongo.replicaSet")
   val authSource = config.getString("configuration.mongo.authSource")
+  val writeConcernsW = config.getString("configuration.mongo.write.concerns.w")
+  val writeConcernsJournaled = config.getString("configuration.mongo.write.concerns.j")
+  val writeConcernsTimeout = config.getString("configuration.mongo.write.concerns.wtimeout")
 }

@@ -17,6 +17,7 @@ object Constants {
   val DEFAULT_VALID_TO_DATE = 9999123123595959L
   val TIMESTAMP_FORMAT = "yyyyMMddHHmmss"
   val RISK_SOURCE_HSBC_TRADE_ID = "riskSource.hsbctradeId"
+  val RISK_SOURCE_TRADE_ID = "riskSource.tradeId"
   val VALUATION_CONTEXT_DESCRIPTION = "valuationContext.description"
   val MEASURE_NAME = "measure.name"
 
