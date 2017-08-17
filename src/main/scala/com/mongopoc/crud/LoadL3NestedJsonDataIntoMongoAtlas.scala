@@ -65,7 +65,12 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     //val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)
 
     val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port + ",") + ":" + mongo_port
-    val mongoAtlasURI = s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+    var mongoAtlasURI = ""
+    if(mongoSecurityEnabled)
+      mongoAtlasURI = s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+    else
+      mongoAtlasURI = s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
+
 
     if (doExpireOldRecords)
       expireOldVersion(inputDF, propertyMap, mongoAtlasURI)
