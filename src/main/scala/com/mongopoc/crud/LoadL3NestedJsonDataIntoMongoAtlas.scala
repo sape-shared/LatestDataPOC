@@ -1,5 +1,6 @@
 package com.mongopoc.crud
 
+import java.io.File
 import java.time.{LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter
 
@@ -15,6 +16,13 @@ import org.apache.spark.broadcast.Broadcast
 import org.bson.Document
 
 import scala.collection.mutable
+import com.databricks.spark.avro.{AvroDataFrameReader, SchemaConverters}
+import org.apache.avro.Schema
+import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
+
+import scala.collection.JavaConverters._
+import scala.io.Source
+
 
 /**
   * Created by sgar42 on 04-Aug-17.
@@ -37,8 +45,23 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     println("Input Locations for Load L3 Data : ")
     inputPathList.foreach(println(_))
 
-    val inputDF = spark.read.json(inputPathList: _*)
-
+    /*while (!sd.isAfter(ed)) {
+      inputPathList += baseInputPath + Path.SEPARATOR_CHAR + sd.format(dateTimeFormat)
+      sd = sd.plusDays(1)
+    }*/
+    //prepare schema
+    val avroPath= getClass.getResource("/conf/riskMeasureNestedRecord.avsc").getPath
+    val schema= new Schema.Parser().parse(new File(avroPath))
+    val schemaFields=schema.getFields()
+    var arr= new Array[org.apache.spark.sql.types.StructField](schemaFields.size)
+    var i=0
+    for(field <- schemaFields.asScala){
+      val sField=new StructField(field.name ,SchemaConverters.toSqlType(field.schema).dataType)
+      arr(i)=sField
+      i=i+1
+    }
+    val sType= new StructType(arr)
+    val inputDF = spark.read.schema(sType).json(inputPathList: _*)
     //val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)
 
     val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port + ",") + ":" + mongo_port

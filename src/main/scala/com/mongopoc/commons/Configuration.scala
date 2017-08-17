@@ -12,4 +12,7 @@ trait Configuration {
   implicit lazy val config: Config = {
     load("conf" + File.separator + "application.conf")
   }
+
+
+
 }

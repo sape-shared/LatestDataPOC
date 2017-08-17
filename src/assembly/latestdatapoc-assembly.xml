@@ -29,6 +29,7 @@
             <outputDirectory>LatestDataPOC/conf</outputDirectory>
             <includes>
                 <include>application.conf</include>
+                <include>riskMeasureNestedRecord.avsc</include>
             </includes>
         </fileSet>
     </fileSets>
