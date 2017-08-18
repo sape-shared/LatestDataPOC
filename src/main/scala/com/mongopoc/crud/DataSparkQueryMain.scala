@@ -7,6 +7,5 @@ import com.mongopoc.crud.LoadL3NestedJsonDataIntoMongoAtlas.loadL3DataIntoMongoA
   */
 object DataSparkQueryMain extends App{
 
-
   JoinDslRiskTradeId.riskDslTradeJoin()
 }
