@@ -26,4 +26,6 @@ object Constants {
   val NUM_PARTITIONS = "num_partitions"
   val EXPIRE_OLD_RECORDS = "expireOldRecords"
 
+  val MONGO_URI = "uri"
+
 }

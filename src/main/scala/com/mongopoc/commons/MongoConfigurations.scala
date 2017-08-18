@@ -2,6 +2,8 @@ package com.mongopoc.commons
 
 trait MongoConfigurations extends Configuration {
 
+
+
   val tradeIdBatchSize = config.getString("configuration.tradeIdBatchSize")
   val collection = config.getString("configuration.mongo.collection")
   val mongo_host = config.getString("configuration.mongo.host")
@@ -17,4 +19,12 @@ trait MongoConfigurations extends Configuration {
   val writeConcernsW = config.getString("configuration.mongo.write.concerns.w")
   val writeConcernsJournaled = config.getString("configuration.mongo.write.concerns.j")
   val writeConcernsTimeout = config.getString("configuration.mongo.write.concerns.wtimeout")
+
+  val dslCollection = config.getString("configuration.mongo.dsl_collection")
+  val dslDbName = config.getString("configuration.mongo.dsl_database")
+
+  val joinOutputLoc= config.getString("configuration.mongo.join.outputLoc")
+  val bookIds= config.getString("configuration.mongo.join.bookIdList").split(",")
+  val validToDate= config.getLong("configuration.mongo.join.validTo")
+  val validFromDate= config.getLong("configuration.mongo.join.validFrom")
 }
