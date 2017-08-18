@@ -80,7 +80,7 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
   }
 
   def createPropertyMap: Map[String, String] = {
-    Map(TRADE_ID_BATCH_SIZE -> tradeIdBatchSize, DB_NAME -> mongoDbName, NUM_PARTITIONS -> num_partitions)
+    Map(TRADE_ID_BATCH_SIZE -> tradeIdBatchSize, DB_NAME -> mongoDbName, NUM_PARTITIONS -> num_partitions, MONGO_COLLECTION -> collection)
   }
 
   /*def createDFFromRawData(rawDataLocation: String, propertyMap: Map[String, String]): DataFrame = {

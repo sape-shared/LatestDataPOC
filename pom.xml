@@ -31,7 +31,7 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10 -->
@@ -39,14 +39,14 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${spark-version}</artifactId>
             <version>${spark-core-version}</version>
-            <!-- <scope>provided</scope>-->
+             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_${spark-version}</artifactId>
             <version>${spark-sql-version}</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
