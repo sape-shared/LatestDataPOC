@@ -27,4 +27,6 @@ trait MongoConfigurations extends Configuration {
   val bookIds= config.getString("configuration.join.bookIdList").split(",")
   val validToDate= config.getLong("configuration.join.validTo")
   val validFromDate= config.getLong("configuration.join.validFrom")
+  val localTest= config.getBoolean("configuration.mongo.localtest")
+  val excecutors= config.getInt("configuration.join.excecutors")
 }
