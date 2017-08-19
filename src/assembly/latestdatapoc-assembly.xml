@@ -32,5 +32,21 @@
                 <include>riskMeasureNestedRecord.avsc</include>
             </includes>
         </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/scripts</directory>
+            <outputDirectory>LatestDataPOC/scripts</outputDirectory>
+            <includes>
+                <include>/**</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/runbook</directory>
+            <outputDirectory>LatestDataPOC/runbook</outputDirectory>
+            <includes>
+                <include>/**</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
