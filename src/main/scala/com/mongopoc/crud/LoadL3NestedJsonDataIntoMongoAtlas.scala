@@ -45,10 +45,6 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     println("Input Locations for Load L3 Data : ")
     inputPathList.foreach(println(_))
 
-    /*while (!sd.isAfter(ed)) {
-      inputPathList += baseInputPath + Path.SEPARATOR_CHAR + sd.format(dateTimeFormat)
-      sd = sd.plusDays(1)
-    }*/
     //prepare schema
     val avroPath = getClass.getResource("/conf/riskMeasureNestedRecord.avsc").getPath
     val schema = new Schema.Parser().parse(new File(avroPath))
@@ -62,7 +58,6 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     }
     val sType = new StructType(arr)
     val inputDF = spark.read.schema(sType).json(inputPathList: _*)
-    //val inputRawDataDF: DataFrame = createDFFromRawData(baseInputPath, propertyMap)
 
     val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port + ",") + ":" + mongo_port
     val mongoAtlasURI = if (mongoSecurityEnabled)
@@ -108,19 +103,7 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
         // Partition level declaration
         val propertyMapPartitionLevel = propertyMap_Broadcast.value
 
-        /* val mongoPort = propertyMapPartitionLevel.get(MONGO_PORT).get.trim.toInt
-         val mongoServerAddress: Seq[ServerAddress] = propertyMapPartitionLevel.get(MONGO_HOST).get.split(" ").map { host => new ServerAddress(host.trim, mongoPort) }.toList
-         val mongoCredential: MongoCredential = MongoCredential.createMongoCRCredential(mongoUsername, mongoDbName, mongoPassword.toCharArray())
-         var credentials = List[MongoCredential]()
-         credentials = mongoCredential :: credentials
-
-         val builder = new MongoClientOptions.Builder();
-         builder.maxConnectionIdleTime(60000);
-         val opts = builder.build();*/
-
         val mongoClient = new MongoClient(new MongoClientURI(mongoAtlasURI))
-
-        //  val mongoClient = new MongoClient(new MongoClientURI("mongodb://shiva:'test@123'@cluster0-shard-00-00-oym47.mongodb.net:27017,cluster0-shard-00-01-oym47.mongodb.net:27017,cluster0-shard-00-02-oym47.mongodb.net:27017/risk?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"))
 
         val riskCollection = mongoClient.getDatabase(propertyMapPartitionLevel.get(DB_NAME).get).getCollection(propertyMapPartitionLevel.get(MONGO_COLLECTION).get)
         val tradeIDBatchSize = propertyMapPartitionLevel.get(TRADE_ID_BATCH_SIZE)
