@@ -25,19 +25,9 @@ object JoinDslRiskTradeId extends SparkSessionProvider with MongoConfigurations{
     val propertyMap: Map[String, String] = Map(DB_NAME -> mongoDbName , MONGO_COLLECTION -> collection)
 
     val mongoServers = mongo_host.replaceAll(",", ":" + mongo_port + ",") + ":" + mongo_port
-    val mongoAtlasRiskURI = if(localTest)
-      s"mongodb://$mongoServers/risk.$collection"
-    else if (mongoSecurityEnabled)
-      s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
-    else
-      s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
+    val mongoAtlasRiskURI = createRiskURI(mongoServers)
 
-    val mongoAtlasDslURI = if(localTest)
-      s"mongodb://$mongoServers/dsl.$dslCollection"
-    else if (mongoSecurityEnabled)
-      s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$dslCollection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
-    else
-      s"mongodb://$mongoServers/dsl.$dslCollection?ssl=$ssl&replicaSet=$replicaSet"
+    val mongoAtlasDslURI = createDslURI(mongoServers)
 
     val dslReadConfig = ReadConfig(Map(MONGO_URI -> mongoAtlasDslURI))
 
@@ -65,6 +55,23 @@ object JoinDslRiskTradeId extends SparkSessionProvider with MongoConfigurations{
   }
 
 
+ def createRiskURI(mongoServers: String)= {
+   if(localTest)
+     s"mongodb://$mongoServers/risk.$collection"
+   else if (mongoSecurityEnabled)
+     s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+   else
+     s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
+ }
+
+  def createDslURI(mongoServers: String)= {
+    if(localTest)
+      s"mongodb://$mongoServers/dsl.$dslCollection"
+    else if (mongoSecurityEnabled)
+      s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$dslCollection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+    else
+      s"mongodb://$mongoServers/dsl.$dslCollection?ssl=$ssl&replicaSet=$replicaSet"
+  }
 
 
 }
