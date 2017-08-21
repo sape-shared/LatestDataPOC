@@ -57,20 +57,20 @@ object JoinDslRiskTradeId extends SparkSessionProvider with MongoConfigurations{
 
  def createRiskURI(mongoServers: String)= {
    if(localTest)
-     s"mongodb://$mongoServers/risk.$collection"
+     s"mongodb://$mongoServers/$mongoDbName.$collection"
    else if (mongoSecurityEnabled)
-     s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+     s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/$mongoDbName.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
    else
-     s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
+     s"mongodb://$mongoServers/$mongoDbName.$collection?ssl=$ssl&replicaSet=$replicaSet"
  }
 
   def createDslURI(mongoServers: String)= {
     if(localTest)
-      s"mongodb://$mongoServers/dsl.$dslCollection"
-    else if (mongoSecurityEnabled)
-      s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$dslCollection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
-    else
-      s"mongodb://$mongoServers/dsl.$dslCollection?ssl=$ssl&replicaSet=$replicaSet"
+      s"mongodb://$mongoServers/$dslDbName.$dslCollection"
+    else if (mongoSecurityEnabled) {
+      s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/$dslDbName.$dslCollection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
+    } else{
+      s"mongodb://$mongoServers/$dslDbName.$dslCollection?ssl=$ssl&replicaSet=$replicaSet"}
   }
 
 
