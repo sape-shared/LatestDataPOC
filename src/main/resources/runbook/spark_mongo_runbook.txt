@@ -1,0 +1,23 @@
+----- Environment Details ---------
+
+S3 location = EU(London)
+S3 Bucket name = rsl-mongo-poc
+
+Details for data in S3 bucket :
+
+rsl-mongo-poc/jars/LatestDataPOC-1.0-SNAPSHOT.zip								---> Get Risk data corrosponding to the book id in dsl
+
+----------------------------------------------------------------------------------------------------------------------------
+
+Category : Join Query 
+
+Join Query
+
+	a. Script Name :- sparkmongoJoin.sh
+	b. Parameters :-  1. No of executors  
+					  2. Executor cores
+	c. Change the application.conf file for - "CUSTOM SETTINGS" like outputloc, bookList, mongo connection details, etc
+					  
+	c. Sample Command :- 
+		sparkmongoJoin.sh 4 6
+		
