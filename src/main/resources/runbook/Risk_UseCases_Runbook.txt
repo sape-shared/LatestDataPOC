@@ -40,15 +40,15 @@ Use Case 2.1: Fetch raw risk records for an entire day
 		num of threads = 1, 5, 10, 20, 50, 100 ( choose based on Use Case Variation Run )
 		
 	Statistics Output Details for Category :
-		Location for output files  : "{project.basedir}/output/query/FetchOneDayRisk/"
+		Location for output stats files  : "{project.basedir}/output/query/FetchOneDayRisk/"
 		Output file will conatin the total run time and respective query run time for each thread as below sample.
 		Sample Output (5 Concurrent Query) :-
-                                                Total Run Time : 3307 ms
                                                 Query Run Time : 674 ms
                                                 Query Run Time : 643 ms
                                                 Query Run Time : 624 ms
                                                 Query Run Time : 723 ms
                                                 Query Run Time : 643 ms
+                                                Total Concurrent Run Time : 3307 ms
 
 
 	Use Case Variation & run commands
