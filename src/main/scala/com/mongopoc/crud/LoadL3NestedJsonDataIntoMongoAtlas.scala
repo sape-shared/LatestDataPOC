@@ -63,7 +63,7 @@ object LoadL3NestedJsonDataIntoMongoAtlas extends SparkSessionProvider with Mong
     val mongoAtlasURI = if (mongoSecurityEnabled)
       s"mongodb://$mongoUsername:$mongoPassword@$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet&authSource=$authSource"
     else
-      s"mongodb://$mongoServers/risk.$collection?ssl=$ssl&replicaSet=$replicaSet"
+      s"mongodb://$mongoServers/risk.$collection"
 
     if (doExpireOldRecords)
       expireOldVersion(inputDF, propertyMap, mongoAtlasURI)
