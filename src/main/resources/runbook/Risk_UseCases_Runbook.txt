@@ -25,8 +25,10 @@ Pre Existing Data Set Size in Mongo for runs:
 	1. 1 week (1.25 TB) JSON
 	2. 1 Month (5 TB) JSON
 	3. 2 Month (10 TB) JSON
-	
----------  Category 2 : QUERY -----------
+
+-----------------------------------------------------------------------------------------------------------------------------------
+                     Category 2 : QUERY
+-----------------------------------------------------------------------------------------------------------------------------------
 
 Use Case 2.1: Fetch raw risk records for an entire day
 
@@ -40,7 +42,7 @@ Use Case 2.1: Fetch raw risk records for an entire day
 		num of threads = 1, 5, 10, 20, 50, 100 ( choose based on Use Case Variation Run )
 		
 	Statistics Output Details for Category :
-		Location for output stats files  : "{project.basedir}/output/query/FetchOneDayRisk/"
+		Location for output stats files  : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/"
 		Output file will conatin the total run time and respective query run time for each thread as below sample.
 		Sample Output (5 Concurrent Query) :-
                                                 Query Run Time : 674 ms
@@ -50,27 +52,55 @@ Use Case 2.1: Fetch raw risk records for an entire day
                                                 Query Run Time : 643 ms
                                                 Total Concurrent Run Time : 3307 ms
 
-
 	Use Case Variation & run commands
 		2.1.1: 1 concurrent query 
 			a. Run command : ./RunFetchRawData.sh 20170120 20170120010000 1
-			b. Read Statistics Output files : "{project.basedir}/output/query/FetchOneDayRisk/FetchRisk_1_Concurrent.log"
-				
-			
+			b. Read Statistics Output files : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/FetchRisk_1_Concurrent.log"
+
 		2.1.2: 5 concurrent query 
 			a. Run command : ./RunFetchRawData.sh 20170120 20170120010000 5
-			b. Read Statistics files output location : "{project.basedir}/output/query/FetchOneDayRisk/FetchRisk_5_Concurrent.log"
-		
-	
+			b. Read Statistics Output files : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/FetchRisk_5_Concurrent.log"
+
 		2.1.3: 10 concurrent query 
 			a. Run command : ./RunFetchRawData.sh 20170120 20170120010000 10
-			b. Read Statistics files output location : "{project.basedir}/output/query/FetchOneDayRisk/FetchRisk_10_Concurrent.log"
-			
-			
+			b. Read Statistics Output files : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/FetchRisk_10_Concurrent.log"
+
 		2.1.4: 20 concurrent query 
 			a. Run command : ./RunFetchRawData.sh 20170120 20170120010000 20
-			b. Read Statistics files output location : "{project.basedir}/output/query/FetchOneDayRisk/FetchRisk_20_Concurrent.log"
+			b. Read Statistics Output files : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/FetchRisk_20_Concurrent.log"
 		
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Use Case 2.2: Fetch raw risk records for list of 3.5 Million trade ids
+
+	Script Location : "{project.basedir}/resources/scripts/QueryMongo"
+	Script name : "RunFetchRawData.sh"
+	Script parameters : valuation date, snapshot timestamp, num of threads
+
+	Sample Values for run :
+		valuation Date = 20170120 (YYYYMMDD)
+		snapshot timestamp = 20170120010000 (YYYYMMDDHHmmSS)
+		num of threads = 1, 5, 10, 20, 50, 100 ( choose based on Use Case Variation Run )
+
+	Statistics Output Details for Category :
+		Location for output stats files  : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/"
+		Output file will conatin the total run time and respective query run time for each thread as below sample.
+		Sample Output (5 Concurrent Query) :-
+                                                Query Run Time : 674 ms
+                                                Query Run Time : 643 ms
+                                                Query Run Time : 624 ms
+                                                Query Run Time : 723 ms
+                                                Query Run Time : 643 ms
+                                                Total Concurrent Run Time : 3307 ms
+
+	Use Case Variation & run commands
+		2.2.1: 1 concurrent query
+			a. Run command : ./RunFetchRawData.sh 20170120 20170120010000 1
+			b. Read Statistics Output files : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/FetchRisk_1_Concurrent.log"
+
+		2.2.2: 10 concurrent query
+			a. Run command : ./RunFetchRawData.sh 20170120 20170120010000 10
+			b. Read Statistics Output files : "{project.basedir}src/main/output/QueryMongo/FetchOneDayRisk/FetchRisk_10_Concurrent.log"
 
 
 
