@@ -35,5 +35,5 @@ object JoinRiskTradeDataQuery  extends SparkSessionProvider with MongoConfigurat
     mongoClient.close()
     itr
   }
-  riskData.map{doc => println(doc.toJson)}
+  riskData.foreach(x => {})
 }
