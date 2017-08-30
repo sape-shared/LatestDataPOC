@@ -9,11 +9,11 @@ import org.mongodb.scala.model.Filters.{and, gt, in, lt}
 
 object JoinRiskTradeDataQuery  extends SparkSessionProvider with MongoConfigurations with App{
 
-  val bookIdList: List[String]= bookIds.toList
+  val bookIdList: List[String]= args(0).split(",").toList
 
-  val riskFindPropertyMap: Map[String, String] = Map(DB_NAME -> mongoDbName , MONGO_COLLECTION -> collection)//, "SNAPSHOT"->"20170210120000")
-  val mongoDSLUri = s"${mongo_host}:${mongo_port}/${dslDbName}.${dslCollection}"
-  val mongoRSLUri = s"${mongo_host}:${mongo_port}/${mongoDbName}.${collection}"
+  val riskFindPropertyMap: Map[String, String] = Map(DB_NAME -> "HSBC" , MONGO_COLLECTION -> "riskmeasure")//, "SNAPSHOT"->"20170210120000")
+  val mongoDSLUri = "mongodb://localhost:27017/HSBC.trades"//s"${mongo_host}:${mongo_port}/${dslDbName}.${dslCollection}"
+  val mongoRSLUri = "mongodb://localhost:27017/HSBC.riskmeasure"//s"${mongo_host}:${mongo_port}/${mongoDbName}.${collection}"
 
   val readDSLConfig = ReadConfig(Map(MONGO_URI->mongoDSLUri))
   val readRSLConfig = ReadConfig(Map(MONGO_URI->mongoRSLUri))
@@ -28,7 +28,7 @@ object JoinRiskTradeDataQuery  extends SparkSessionProvider with MongoConfigurat
     val mongoPropertyMap = propertyMapBr.value
     val snapshot = mongoPropertyMap("SNAPSHOT").toLong
     val mongoClient = new MongoClient(new MongoClientURI(mongoUri))
-    val collection= mongoClient.getDatabase(mongoPropertyMap(DB_NAME)).getCollection(mongoPropertyMap(MONGO_COLLECTION))
+    val collection= mongoClient.getDatabase(mongoPropertyMap("HSBC")).getCollection(mongoPropertyMap("trades"))
     import scala.collection.JavaConverters._
     val doc= collection.find(in("riskSource.tradeId", iter.toList:_*))//, gt("validTo", snapshot), lt("validFrom", snapshot)))
     val itr= doc.iterator().asScala
