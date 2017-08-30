@@ -6,9 +6,11 @@ package com.mongopoc.commons
 object Constants {
 
   val MONGO_COLLECTION = "collection";
+  val DSL_COLLECTION = "v"
   val MONGO_HOST = "mongo_host"
   val MONGO_PORT = "mongoPort"
   val DB_NAME = "dbName"
+  val DSL_DATABASE = "dsl_database"
 
   val VALUATION_DATE = "valuationDate"
   val VALID_TO = "validTo"
