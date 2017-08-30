@@ -7,7 +7,7 @@ import com.mongopoc.commons.Constants._
 import com.mongopoc.commons.{MongoConfigurations, SparkSessionProvider}
 import org.mongodb.scala.model.Filters.{and, gt, in, lt}
 
-object JoinRiskTradeDataQuery  extends SparkSessionProvider with MongoConfigurations with App{
+object JoinRiskTradeDataQuery  extends SparkSessionProvider with App{
 
   val bookIdList: List[String]= args(0).split(",").toList
 
